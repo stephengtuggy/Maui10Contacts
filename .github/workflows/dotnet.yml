@@ -18,8 +18,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
-            arch: arm64
           - os: macos-15
             arch: arm64
           - os: macos-15-intel
@@ -35,6 +33,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Xcode (${{ matrix.arch }}, macOS)
+        if: contains(matrix.os, 'macos')
+        uses: JohnTitor/setup-xcode@ed4e651374114d0a5cc19af4c736aca9a8a9e4f9 #v0.1.1
+        with:
+          xcode-version: 26.2
         
       - name: Set up dotnet (${{ matrix.arch }}, Ubuntu)
         if: contains(matrix.os, 'ubuntu')
@@ -42,13 +46,7 @@ jobs:
         with:
           dotnet-version: 10.0
           architecture: ${{ matrix.arch }}
-          workloads: maui, android, maui-android
-
-      - name: Set up XCode (${{ matrix.arch }}, macOS)
-        if: contains(matrix.os, 'macos')
-        uses: JohnTitor/setup-xcode@ed4e651374114d0a5cc19af4c736aca9a8a9e4f9 #v0.1.1
-        with:
-          xcode-version: 26.2
+          workloads: maui-android
       
       - name: Setup dotnet (${{ matrix.arch }}, macOS)
         if: contains(matrix.os, 'macos')
@@ -56,7 +54,7 @@ jobs:
         with:
           dotnet-version: 10.0
           architecture: ${{ matrix.arch }}
-          workloads: maui, android, maui-android, maui-ios, maui-maccatalyst
+          workloads: maui-android, maui-ios, maui-maccatalyst
       
       - name: Setup dotnet (${{ matrix.arch }}, Windows)
         if: contains(matrix.os, 'windows')
@@ -64,7 +62,7 @@ jobs:
         with:
           dotnet-version: 10.0
           architecture: ${{ matrix.arch }}
-          workloads: maui, android, maui-android, maui-ios, maui-maccatalyst, maui-windows
+          workloads: maui-android, maui-ios, maui-maccatalyst, maui-windows
       
       - name: Restore dependencies
         run: dotnet restore

@@ -17,30 +17,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ macos-14, macos-15, macos-15-intel, ubuntu-22.04, ubuntu-24.04, windows-2022, windows-2025 ]
-        arch: [x64, arm64]
-        exclude:
-          - os: windows-2022
+        include:
+          - os: macos-14
             arch: arm64
-          - os: windows-2025
+          - os: macos-15
             arch: arm64
+          - os: macos-15-intel
+            arch: x64
           - os: ubuntu-22.04
-            arch: arm64
+            arch: x64
           - os: ubuntu-24.04
-            arch: arm64
+            arch: x64
+          - os: windows-2022
+            arch: x64
+          - os: windows-2025
+            arch: x64
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         
-      - name: Setup dotnet (${{ matrix.arch }}, ${{ matrix.os }})
+      - name: Set up dotnet (${{ matrix.arch }}, Ubuntu)
         if: contains(matrix.os, 'ubuntu')
         uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
           dotnet-version: 10.0
           architecture: ${{ matrix.arch }}
           workloads: maui, android, maui-android
+
+      - name: Set up XCode (${{ matrix.arch }}, macOS)
+        if: contains(matrix.os, 'macos')
+        uses: JohnTitor/setup-xcode@ed4e651374114d0a5cc19af4c736aca9a8a9e4f9 #v0.1.1
+        with:
+          xcode-version: 26.2
       
-      - name: Setup dotnet (${{ matrix.arch }}, ${{ matrix.os }})
+      - name: Setup dotnet (${{ matrix.arch }}, macOS)
         if: contains(matrix.os, 'macos')
         uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
@@ -48,7 +58,7 @@ jobs:
           architecture: ${{ matrix.arch }}
           workloads: maui, android, maui-android, maui-ios, maui-maccatalyst
       
-      - name: Setup dotnet (${{ matrix.arch }}, ${{ matrix.os }})
+      - name: Setup dotnet (${{ matrix.arch }}, Windows)
         if: contains(matrix.os, 'windows')
         uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:

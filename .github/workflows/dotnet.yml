@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: xcode-27-arm64
+          - os: xcode-27
             arch: arm64
           - os: ubuntu-22.04
             arch: x64
